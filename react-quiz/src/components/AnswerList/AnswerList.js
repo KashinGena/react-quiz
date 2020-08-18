@@ -8,7 +8,8 @@ const AnswerList = props => (
             return (
             <AnswerItem 
                 answer={answer}
-                index={index}
+                key={index}
+                onAnswerClick={props.onAnswerClick}
             />
             
             )
