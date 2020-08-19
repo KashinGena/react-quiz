@@ -8,14 +8,15 @@ import AnswerList from '../AnswerList/AnswerList'
     <div className="ActiveQuiz">
         <p className='Question'>
             <span >
-                <strong>1</strong>&nbsp;
+                <strong>{props.number}</strong>&nbsp;
                 {props.question}
             </span>
-            <small>{props.number} из 12</small>
+            <small>{props.number} из {props.quizLength}</small>
         </p>
         <AnswerList
             answers={props.answers}
             onAnswerClick={props.onAnswerClick}
+            state={props.state}
         />
     </div>
 )
