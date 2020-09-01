@@ -5,6 +5,7 @@ import { createControl } from '../../formFramework/formFramework'
 import Input from '../../components/UI/Input/Input'
 import Select from '../../components/UI/Select/Select'
 import {validate, validateForm} from '../../formFramework/formFramework'
+import Axios from 'axios'
 
 
 
@@ -107,10 +108,10 @@ export default class QuizCreator extends React.Component{
             id:index,
             rightAnswerId:this.state.rightAnswerId,
             answers: [
-                {text:this.state.formControls.option1.text, value:this.state.formControls.option1.id},
-                {text:this.state.formControls.option2.text, value:this.state.formControls.option2.id},
-                {text:this.state.formControls.option3.text, value:this.state.formControls.option3.id},
-                {text:this.state.formControls.option4.text, value:this.state.formControls.option4.id},
+                {text:this.state.formControls.option1.value, id:this.state.formControls.option1.id},
+                {text:this.state.formControls.option2.value, id:this.state.formControls.option2.id},
+                {text:this.state.formControls.option3.value, id:this.state.formControls.option3.id},
+                {text:this.state.formControls.option4.value, id:this.state.formControls.option4.id},
             ]
         }
         quiz.push(questionItem)
@@ -122,6 +123,24 @@ export default class QuizCreator extends React.Component{
             formControls:createFormControls()
         })
 
+    }
+
+    addQuizHandler = async (event) => {
+        event.preventDefault()
+        try {
+            const response =await Axios.post('https://quiz-34eaa.firebaseio.com/quiz.json',this.state.quiz)
+            console.log(response.data)
+            this.setState({
+                quiz:[],
+                isFormValid:false,
+                rightAnswerId:1,
+                formControls:createFormControls()
+            })
+        }
+        catch(error) {console.log(error)}
+        
+       
+        
     }
 
     selectChangeHandler = (event) => {

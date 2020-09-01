@@ -2,6 +2,7 @@ import React from 'react'
 import './Auth.css'
 import Button from '../../components/UI/Button/Button'
 import Input from '../../components/UI/Input/Input'
+import Axios from 'axios'
 
 export default class Auth extends React.Component{
     state = {
@@ -38,6 +39,8 @@ export default class Auth extends React.Component{
     }
 
 
+    
+
     onChangeHandler = (event, controlName) => {
       
         const formControls={...this.state.formControls}
@@ -64,12 +67,12 @@ export default class Auth extends React.Component{
         }
 
         if (validation.email) {
-            console.log('Проверка email')
+            
             isValid=this.validateEmail(value) && isValid
         }
 
         if (validation.minlength) {
-            console.log('Проверка длины')
+           
             isValid=value.trim().length>=validation.minlength && isValid
         }
         return isValid
@@ -81,13 +84,44 @@ export default class Auth extends React.Component{
      }
 
     loginHandler = () => {
+        const authData ={
+            email:this.state.formControls.email.value,
+            password:this.state.formControls.password.value,
+            returnSecureToken:true
 
+        }
+        try{
+            Axios.post('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCDe26ov0RDg5hwwySnPg9jCdbSC7doYg8',
+            authData )
+        }
+        catch(e) {
+            console.log(e)
+        }
     }
 
 
 
-    registerHandler = () => {
+    registerHandler = async () => {
+        const authData ={
+            email:this.state.formControls.email.value,
+            password:this.state.formControls.password.value,
+            returnSecureToken:true
 
+        }
+        
+                
+        try{
+            const response=await Axios.post('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCDe26ov0RDg5hwwySnPg9jCdbSC7doYg8'
+       
+            ,
+            authData )
+            console.log(response.data);
+            
+        }
+        catch(e) {
+            console.log(e)
+        }
+       
     }
 
     onSubmitHandler = (e) => {

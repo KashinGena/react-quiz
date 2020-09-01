@@ -3,43 +3,45 @@ import React, {Component} from 'react'
 import "./Quiz.css"
 import ActiveQuiz from "../../components/ActiveQuiz/ActiveQuiz"
 import FinishedQuiz from '../../components/FinishedQuiz/FinishedQuiz'
+import Axios from 'axios'
+import Loader from '../../components/UI/Loader/Loader'
 
 
 
 export default class Quiz extends Component {
     state={
+        loading:true,
         results:{},
         isFinished:false,
         activeQuizNumber:0,
         answerState:null,
-        quiz:[
-            {
-                question:"Какого цвета небо?",
-               
-                rigthAnswerId:3,
-                answers: [
-                    {text:"Синее", id:1},
-                    {text:"Зеленое", id:2},
-                    {text:"Голубое", id:3},
-                    {text:"Черное", id:4}
-                ]
-            },
-
-            {
-                question:"В каком году основа Санкт-Петербург",
-               
-                rigthAnswerId:3,
-                answers: [
-                    {text:"1700", id:1},
-                    {text:"1701", id:2},
-                    {text:"1703", id:3},
-                    {text:"1803", id:4}
-                ]
-            },
-        ]
+        quiz:[]
     }
 
+
+    async componentDidMount() {
+        try {
+            const response = await Axios.get(`https://quiz-34eaa.firebaseio.com/quiz/${this.props.match.params.id}.json`)
+            const quiz=response.data
+            console.log(quiz)
+            
+           
+            this.setState({
+                quiz,
+                loading:false
+            })
+        }
+        catch (error) {
+            console.log(error)
+        }
+      
+    }
+
+
+
     onAnswerClickHandler = (answerId) => {
+        console.log(this.state.quiz[this.state.activeQuizNumber].rigthAnswerId)
+        console.log(answerId)
         if (this.state.answerState) {
             const key=Object.keys(this.state.answerState)[0]
             if (this.state.answerState[key]==='success') return
@@ -47,7 +49,8 @@ export default class Quiz extends Component {
        
         const results=this.state.results
         const question=this.state.quiz[this.state.activeQuizNumber]
-        if (answerId===question.rigthAnswerId) {
+        console.log(question)
+        if (answerId===question.rightAnswerId) {
             if(results[this.state.activeQuizNumber]!=='error')
            results[this.state.activeQuizNumber]='success'
             this.setState(
@@ -108,8 +111,11 @@ export default class Quiz extends Component {
                 <h1>
                     Ответьте на все вопросы
                 </h1>
-                {
-                    this.state.isFinished
+                {this.state.loading
+                ?
+                <Loader/>
+                :
+                this.state.isFinished
                     ?
                    <FinishedQuiz
                    results={this.state.results}
@@ -124,7 +130,10 @@ export default class Quiz extends Component {
                     quizLength={this.state.quiz.length}
                     state={this.state.answerState}
                 />
+                
+                
                 }
+               
                     
                 </div>
             </div>
