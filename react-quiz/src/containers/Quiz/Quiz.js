@@ -3,104 +3,31 @@ import React, {Component} from 'react'
 import "./Quiz.css"
 import ActiveQuiz from "../../components/ActiveQuiz/ActiveQuiz"
 import FinishedQuiz from '../../components/FinishedQuiz/FinishedQuiz'
-import Axios from 'axios'
 import Loader from '../../components/UI/Loader/Loader'
+import { connect } from 'react-redux'
+import {fetchQuizById,quizAnswerClick} from '../../store/actions/quiz';
 
 
 
-export default class Quiz extends Component {
-    state={
-        loading:true,
-        results:{},
-        isFinished:false,
-        activeQuizNumber:0,
-        answerState:null,
-        quiz:[]
-    }
+class Quiz extends Component {
+ 
 
 
-    async componentDidMount() {
-        try {
-            const response = await Axios.get(`https://quiz-34eaa.firebaseio.com/quiz/${this.props.match.params.id}.json`)
-            const quiz=response.data
-            console.log(quiz)
-            
-           
-            this.setState({
-                quiz,
-                loading:false
-            })
-        }
-        catch (error) {
-            console.log(error)
-        }
-      
+     componentDidMount() {
+         this.props.fetchQuizById(this.props.match.params.id)
+
     }
 
 
 
     onAnswerClickHandler = (answerId) => {
-        console.log(this.state.quiz[this.state.activeQuizNumber].rigthAnswerId)
-        console.log(answerId)
-        if (this.state.answerState) {
-            const key=Object.keys(this.state.answerState)[0]
-            if (this.state.answerState[key]==='success') return
-        }
+        this.props.quizAnswerClick(answerId)
        
-        const results=this.state.results
-        const question=this.state.quiz[this.state.activeQuizNumber]
-        console.log(question)
-        if (answerId===question.rightAnswerId) {
-            if(results[this.state.activeQuizNumber]!=='error')
-           results[this.state.activeQuizNumber]='success'
-            this.setState(
-                {
-                    results,
-                    answerState:{[answerId]:'success'},
-                   
-                }
-            )
-
-            const timeout=window.setTimeout(()=>{
-
-                if (!this.isQuizFinished())
-                {
-                    this.setState(
-                        {
-                            activeQuizNumber:this.state.activeQuizNumber+1,
-                            answerState:null
-                        })
-                }
-                else {
-                    this.setState(
-                        {
-                            isFinished:true
-                        })
-                }
-    
-                window.clearTimeout(timeout)
-            },500)
-          
-        }
-        else {
-            results[this.state.activeQuizNumber]='error'
-            this.setState({
-                results,
-                answerState:{[answerId]:'error'}
-            })
-        }
-       
-
-       
-
-        console.log(this.state.results)
     }
 
 
 
-    isQuizFinished() {
-        return this.state.activeQuizNumber+1>=this.state.quiz.length
-    }
+
 
 
     render() {
@@ -111,24 +38,24 @@ export default class Quiz extends Component {
                 <h1>
                     Ответьте на все вопросы
                 </h1>
-                {this.state.loading
+                {this.props.loading || !this.props.quiz
                 ?
                 <Loader/>
                 :
-                this.state.isFinished
+                this.props.isFinished
                     ?
                    <FinishedQuiz
-                   results={this.state.results}
-                   quiz={this.state.quiz}
+                   results={this.props.results}
+                   quiz={this.props.quiz}
                    />
                     :
                     <ActiveQuiz
-                    answers={this.state.quiz[this.state.activeQuizNumber].answers}
-                    number ={this.state.activeQuizNumber+1}
-                    question ={this.state.quiz[this.state.activeQuizNumber].question}
-                    onAnswerClick={this.onAnswerClickHandler}
-                    quizLength={this.state.quiz.length}
-                    state={this.state.answerState}
+                    answers={this.props.quiz[this.props.activeQuizNumber].answers}
+                    number ={this.props.activeQuizNumber+1}
+                    question ={this.props.quiz[this.props.activeQuizNumber].question}
+                    onAnswerClick={this.props.quizAnswerClick}
+                    quizLength={this.props.quiz.length}
+                    state={this.props.answerState}
                 />
                 
                 
@@ -140,3 +67,26 @@ export default class Quiz extends Component {
         )
     }
 }
+
+
+function mapStateToProps(state) {
+    return {
+        loading:state.quiz.loading,
+        results:state.quiz.results,
+        isFinished:state.quiz.isFinished,
+        activeQuizNumber:state.quiz.activeQuizNumber,
+        answerState:state.quiz.answerState,
+        quiz:state.quiz.quiz
+    }
+
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        fetchQuizById: id => dispatch(fetchQuizById(id)),
+        quizAnswerClick : answerId => dispatch(quizAnswerClick(answerId))
+    }
+}
+
+
+export default connect(mapStateToProps,mapDispatchToProps)(Quiz)
