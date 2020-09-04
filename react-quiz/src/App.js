@@ -7,6 +7,7 @@ import QuizList from '../src/containers/QuizList/QuizList'
 import Auth from '../src/containers/Auth/Auth'
 import QuizCreator from '../src/containers/QuizCreator/QuizCreator'
 
+
 function App() {
   return (
     <Layout>
