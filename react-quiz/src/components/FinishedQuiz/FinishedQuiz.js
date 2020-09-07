@@ -30,7 +30,7 @@ const FinishedQuiz = (props) => {
             <p>Правильно {sum} из {props.quiz.length}</p>
             <div>
                 <Link to='/'>
-                <Button onClick={props.onRetry}
+                <Button
                type='success'>К спискам тестов</Button>
                 </Link>
                <Button onClick={props.onRetry}

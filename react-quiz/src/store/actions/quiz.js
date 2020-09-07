@@ -5,7 +5,8 @@ import { FETCH_QUIZES_SUCCESS,
          FETCH_QUIZ_SUCCESS,
          QUIZ_SET_STATE,
          QUIZ_FINISHED,
-         QUIZ_NOT_FINISHED } from "./actionsTypes";
+         QUIZ_NOT_FINISHED,
+         RETRY_QUIZ } from "./actionsTypes";
 
 export  function fetchQuizes() {
     return async dispatch => {
@@ -152,6 +153,12 @@ export function quizAnswerClick (answerId) {
         
        
     
+    }
+}
+
+export function retryHandler() {
+    return {
+        type:RETRY_QUIZ
     }
 }
 

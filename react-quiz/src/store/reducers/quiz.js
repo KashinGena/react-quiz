@@ -4,7 +4,8 @@ import { FETCH_QUIZES_START,
          FETCH_QUIZ_SUCCESS,
          QUIZ_SET_STATE,
          QUIZ_FINISHED,
-         QUIZ_NOT_FINISHED } from "../actions/actionsTypes"
+         QUIZ_NOT_FINISHED, 
+         RETRY_QUIZ} from "../actions/actionsTypes"
 
 const initialState = {
     quizes:[],
@@ -48,6 +49,14 @@ export default function quizReducer(state = initialState, action) {
             return {
                 ...state, activeQuizNumber:action.activeQuizNumber+1
             }
+        case RETRY_QUIZ: 
+        return {
+            ...state,error:null,
+            results:{},
+            isFinished:false,
+            activeQuizNumber:0,
+            answerState:null,
+        }
 
         
           
